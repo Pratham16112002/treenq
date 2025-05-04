@@ -85,10 +85,11 @@ type InstalledRepository struct {
 }
 
 type BuildArtifactRequest struct {
-	Name       string
-	Path       string
-	Dockerfile string
-	Tag        string
+	Name             string
+	Path             string
+	Dockerfile       string
+	DockerIgnorePath string
+	Tag              string
 }
 
 type Image struct {
@@ -235,11 +236,16 @@ func (h *Handler) deployRepo(ctx context.Context, userDisplayName string, repo R
 	}
 
 	dockerFilePath := filepath.Join(gitRepo.Dir, appSpace.Service.DockerfilePath)
+	dockerIgnorePath := ""
+	if appSpace.Service.DockerIgnorePath != "" {
+		dockerIgnorePath = filepath.Join(gitRepo.Dir, appSpace.Service.DockerIgnorePath)
+	}
 	buildRequest := BuildArtifactRequest{
-		Name:       appSpace.Service.Name,
-		Path:       gitRepo.Dir,
-		Dockerfile: dockerFilePath,
-		Tag:        "latest",
+		Name:             appSpace.Service.Name,
+		Path:             gitRepo.Dir,
+		Dockerfile:       dockerFilePath,
+		DockerIgnorePath: dockerIgnorePath,
+		Tag:              "latest",
 	}
 	image, err := h.docker.Build(ctx, buildRequest)
 	if err != nil {

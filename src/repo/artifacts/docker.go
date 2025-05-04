@@ -110,8 +110,7 @@ func (a *DockerArtifact) Build(ctx context.Context, args domain.BuildArtifactReq
 		Out:              os.Stdout,
 		Err:              os.Stderr,
 		ReportWriter:     os.Stdout,
-		// TODO: fixme, the dockerignore must come from config
-		IgnoreFile:       "./.dockerignore",
+		IgnoreFile:       args.DockerIgnorePath,
 		AdditionalTags:   []string{image.FullPath()},
 	}, args.Dockerfile)
 	if err != nil {
